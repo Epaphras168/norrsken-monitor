@@ -1,0 +1,413 @@
+{
+  "title": "Traffic Bandwidth \u2014 Norrsken Kigali",
+  "uid": "norrsken-traffic-001",
+  "tags": [
+    "norrsken",
+    "traffic",
+    "bandwidth"
+  ],
+  "timezone": "Africa/Kigali",
+  "refresh": "2m",
+  "time": {
+    "from": "2026-08-12T10:28:00.000Z",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Bandwidth by Application (last 5 min sample)",
+      "description": "Top 15 applications by total bytes in the last 5-minute polling window. SOURCE: VictoriaMetrics metric 'fortigate_traffic_total_bytes', topk(15), site=norrsken-kigali. Derived from Elasticsearch index 'logs-fortinet_fortigate.log-*', aggregation: sum of field 'network.bytes' grouped by 'network.application' and 'observer.egress.interface.name' over a 5-minute window. Original FortiGate log: logid=0000000013, type=traffic, subtype=forward. Polled every 300 seconds by traffic_bandwidth_bridge.py. Each bar represents total bytes (upload + download) for that application across all sessions that closed in the last 5 minutes. Color gradient: blue=low, green=medium, yellow=high, red=very high.",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 10
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 100000000
+              },
+              {
+                "color": "yellow",
+                "value": 1000000000
+              },
+              {
+                "color": "red",
+                "value": 10000000000
+              }
+            ]
+          },
+          "custom": {
+            "displayMode": "color-background",
+            "align": "auto"
+          },
+          "max": 50000000000
+        }
+      },
+      "options": {
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Last *"
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sort_desc(topk(15, fortigate_traffic_total_bytes{site=\"norrsken-kigali\"}))",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": [
+              {
+                "desc": true,
+                "displayName": "Value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Real-Time vs Bulk Traffic Volume Over Time",
+      "description": "Aggregate bandwidth split between real-time and bulk traffic classes over time. SOURCE: VictoriaMetrics metric 'fortigate_traffic_total_bytes', summed by label traffic_class (realtime vs bulk), site=norrsken-kigali. Traffic class assigned by traffic_bandwidth_bridge.py based on 'network.application' field from Elasticsearch: REALTIME apps: Zoom, Microsoft.Teams, Google.Meet, Slack, WhatsApp, WhatsApp.Voice, Webex. All others = BULK. Derived from Elasticsearch field 'network.bytes' summed per class. Original FortiGate log: logid=0000000013, type=traffic. KEY USE: After DSCP policy is applied, real-time traffic should remain consistent or increase (routed to bond) while bulk traffic routes to fiber. This panel proves traffic class separation is working as intended.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 10,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(fortigate_traffic_total_bytes{site=\"norrsken-kigali\",traffic_class=\"realtime\"})",
+          "legendFormat": "Real-Time Traffic",
+          "refId": "A",
+          "interval": "2m",
+          "intervalFactor": 1
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(fortigate_traffic_total_bytes{site=\"norrsken-kigali\",traffic_class=\"bulk\"})",
+          "legendFormat": "Bulk Traffic",
+          "refId": "B",
+          "interval": "2m",
+          "intervalFactor": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Real-Time Apps \u2014 Individual Bandwidth Over Time",
+      "description": "Per-application bandwidth for real-time applications over time. SOURCE: VictoriaMetrics metric 'fortigate_traffic_total_bytes', label app=~'Zoom |Zoom_Meeting| Microsoft.Teams| Microsoft.Teams_Audio|Microsoft.Teams_Video| Google.Meet| Google.Chat_Video.Call| Slack|WhatsApp_VoIP.Call| Webex', site=norrsken-kigali. Derived from Elasticsearch field 'network.bytes' aggregated per app over 5-minute windows. Original FortiGate log: logid=0000000013, type=traffic, subtype=forward. Field: 'network.application' (DPI classification by FortiGate). Polled every 300 seconds by traffic_bandwidth_bridge.py. Note: These are session-level byte counts from completed or periodically-updated sessions, not instantaneous throughput. For instantaneous call bitrate see the Call Quality dashboard.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_traffic_total_bytes{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet|Slack|WhatsApp\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Session Count by Application Over Time",
+      "description": "Number of active sessions per application per 5-minute window. SOURCE: VictoriaMetrics metric 'fortigate_traffic_session_count', topk(10), site=norrsken-kigali. Derived from Elasticsearch aggregation: value_count on 'network.bytes' grouped by 'network.application' over 5-minute windows. Original FortiGate log: logid=0000000013, type=traffic. High session count with low bytes = many short connections (typical of signaling, keepalives, API polling). High session count with high bytes = active data transfer or calls. Polled every 300 seconds by traffic_bandwidth_bridge.py.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 5
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "topk(10, fortigate_traffic_session_count{site=\"norrsken-kigali\"})",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Upload vs Download \u2014 Real-Time Apps",
+      "description": "Upload vs download byte split for real-time traffic class. SOURCE: VictoriaMetrics metrics 'fortigate_traffic_upload_bytes' and 'fortigate_traffic_download_bytes', label traffic_class=realtime, site=norrsken-kigali. Derived from Elasticsearch fields 'source.bytes' (upload) and 'destination.bytes' (download) summed across all real-time app sessions. Original FortiGate log: logid=0000000013, type=traffic. Healthy two-way video calls should show roughly balanced upload/download. Heavy asymmetry (e.g. upload << download) indicates members are receiving video but not sending \u2014 cameras off, or upload path constrained. Polled every 300 seconds by traffic_bandwidth_bridge.py.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(fortigate_traffic_upload_bytes{site=\"norrsken-kigali\",traffic_class=\"realtime\"})",
+          "legendFormat": "Upload (realtime)",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(fortigate_traffic_download_bytes{site=\"norrsken-kigali\",traffic_class=\"realtime\"})",
+          "legendFormat": "Download (realtime)",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Traffic via port16 \u2014 All Apps",
+      "description": "All named application traffic confirmed egressing via port16 over time. SOURCE: VictoriaMetrics metric 'fortigate_traffic_total_bytes', label interface=port16, excluding SSL/DNS/Ping generics, site=norrsken-kigali. Derived from Elasticsearch fields 'network.bytes' and 'observer.egress.interface.name' = port16. Original FortiGate log: logid=0000000013, type=traffic. port16 is the FortiGate WAN interface to the Peplink Balance 1350. All traffic appearing here has been confirmed by FortiGate to have egressed toward Peplink. After DSCP policy change, use this panel to verify all expected apps are still routing through port16 and none have been inadvertently rerouted.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 34,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 3
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_traffic_total_bytes{site=\"norrsken-kigali\",interface=\"port16\",app!~\"DNS|Ping|SSL|SSL_TLSv1_2|SSL_TLSv1_3\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "annotations": {
+    "list": [
+      {
+        "name": "Fix Markers",
+        "enable": true,
+        "hide": false,
+        "type": "tags",
+        "builtIn": 0,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "tags": [
+          "fix"
+        ],
+        "iconColor": "red"
+      }
+    ]
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "2m",
+      "5m",
+      "10m"
+    ],
+    "time_options": [
+      "1h",
+      "3h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d"
+    ]
+  }
+}

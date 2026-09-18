@@ -1,0 +1,23 @@
+# logs and archives - regenerated, not source
+*.log
+*.log.*.gz
+archive.log*
+events.log
+
+# raw data - too large, regenerates from source
+data/
+
+# credentials - never commit
+.env
+*.env
+secrets.yml
+credentials.txt
+
+# python
+__pycache__/
+*.pyc
+
+# state files - runtime artifacts, not source
+etl_state.json
+*_state.json
+*_state.txt

@@ -1,0 +1,596 @@
+{
+  "title": "FortiGate SD-WAN SLA \u2014 Norrsken Kigali",
+  "uid": "norrsken-sla-001",
+  "tags": [
+    "norrsken",
+    "fortigate",
+    "sla"
+  ],
+  "timezone": "Africa/Kigali",
+  "refresh": "2m",
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Latency (ms) \u2014 Real-Time Apps",
+      "description": "Per-application latency for real-time communication apps over time. SOURCE: VictoriaMetrics metric 'fortigate_sdwan_sla_latency', labels app=~'Zoom|Microsoft_Teams|Google_Meet|Slack', site=norrsken-kigali. Derived from Elasticsearch index 'logs-fortinet_fortigate.log-*', field 'fortinet.firewall.latency' (float, milliseconds). Original FortiGate log: logid=0113022941, type=event, subtype=sdwan. Ingested via Elastic Agent Fortinet integration v1.36.8. Pushed to VictoriaMetrics every 60s by fortigate_sla_bridge.py. IMPORTANT: For Zoom, Teams, and Slack this measures the TCP signaling channel latency \u2014 not the UDP media stream. The actual video/audio RTP stream latency is measured separately in the Call Quality dashboard. Thresholds: Green <80ms, Yellow 80-150ms, Red >150ms.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 150
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet|Slack\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Jitter (ms) \u2014 Real-Time Apps",
+      "description": "Per-application jitter for real-time communication apps over time. SOURCE: VictoriaMetrics metric 'fortigate_sdwan_sla_jitter', labels app=~'Zoom|Microsoft_Teams|Google_Meet|Slack', site=norrsken-kigali. Derived from Elasticsearch field 'fortinet.firewall.jitter' (float, milliseconds). Original FortiGate log: logid=0113022941, type=event, subtype=sdwan. Pushed to VictoriaMetrics every 60s by fortigate_sla_bridge.py. Jitter = inter-packet delay variation measured by FortiGate kernel. IMPORTANT: Same TCP-only caveat as latency panel \u2014 this is signaling jitter for Zoom/Teams/Slack, not media stream jitter. Thresholds: Green <30ms, Yellow 30-100ms, Red >100ms.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_jitter{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet|Slack\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Packet Loss (%) \u2014 Real-Time Apps",
+      "description": "Per-application packet loss for real-time communication apps over time. SOURCE: VictoriaMetrics metric 'fortigate_sdwan_sla_packetloss', labels app=~'Zoom|Microsoft_Teams|Google_Meet|Slack', site=norrsken-kigali. Derived from Elasticsearch field 'fortinet.firewall.packetloss' (string, percent). Original FortiGate log: logid=0113022941, type=event, subtype=sdwan. Pushed to VictoriaMetrics every 60s by fortigate_sla_bridge.py. IMPORTANT: TCP-only measurement for Zoom/Teams/Slack signaling paths. Thresholds: Green <1%, Yellow 1-5%, Red >5%.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_packetloss{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet|Slack\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Latency (ms) \u2014 Productivity Apps",
+      "description": "Per-application latency for productivity apps over time. SOURCE: VictoriaMetrics metric 'fortigate_sdwan_sla_latency', labels app=~'Gmail|Google_Drive|Google_Meet|YouTube|iCloud|Github|Claude', site=norrsken-kigali. Derived from Elasticsearch field 'fortinet.firewall.latency' (float, ms). Original FortiGate log: logid=0113022941, type=event, subtype=sdwan. AppID mapping built from correlating 'fortinet.firewall.appid' with 'network.application' across traffic logs (logid=0000000013). Pushed to VictoriaMetrics every 60s by fortigate_sla_bridge.py. Note: Y-axis may show large values due to passive SLA overflow artifacts (2^31 integer wrap) in historical data. Values above 5000ms are artifacts and filtered by the bridge \u2014 historical backfill may contain some.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Gmail|Google_Drive|Google_Meet|YouTube|iCloud|Github|Claude\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Current App Quality \u2014 Latency",
+      "description": "Table showing mean, max, and current latency per application. SOURCE: VictoriaMetrics metric 'fortigate_sdwan_sla_latency' reduced to mean/max/last over the selected time range. Derived from Elasticsearch field 'fortinet.firewall.latency'. Original FortiGate log: logid=0113022941, type=event, subtype=sdwan. Color coding: Green <80ms, Yellow 80-150ms, Red >150ms. Use 'Last' column for current network state. Use 'Mean' for baseline characterisation over longer time ranges. Apps with no recent traffic will not appear.",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 10
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 150
+              }
+            ]
+          },
+          "custom": {
+            "displayMode": "color-background",
+            "align": "auto"
+          }
+        }
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Last",
+            "desc": true
+          }
+        ],
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet|Slack|Gmail|Google_Drive|YouTube\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "mean",
+              "max",
+              "last"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "All Apps \u2014 Latency Heatmap",
+      "description": "All named applications on one panel \u2014 latency heatmap over time. SOURCE: VictoriaMetrics metric 'fortigate_sdwan_sla_latency', all labels except SSL/TLS generics and unknown apps, site=norrsken-kigali. Filter: app!~'SSL|SSL_TLSv1_2|SSL_TLSv1_3|Unknown|app_0|app_16195'. Derived from Elasticsearch field 'fortinet.firewall.latency'. Original FortiGate log: logid=0113022941, type=event, subtype=sdwan. AppID to name mapping in fortigate_sla_bridge.py APPID_NAMES dictionary. Each app appears as a separate colored line. Useful for identifying which specific app degrades first during network events.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 38,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 3
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app!~\"SSL|SSL_TLSv1_2|SSL_TLSv1_3|Unknown|app_0|app_16195\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "x3 Interface Throughput (bps)",
+      "description": "Real-time TX and RX throughput on x3 \u2014 the FortiGate WAN interface connecting to the Peplink Balance 1350. SOURCE: VictoriaMetrics metrics 'fortigate_interface_tx_rate_bps' and 'fortigate_interface_rx_rate_bps', label interface=port16. Derived from FortiGate REST API endpoint: GET https://192.168.1.1/api/v2/monitor/system/interface (authenticated via Bearer token, API admin account). Fields used: 'tx_bytes', 'rx_bytes' \u2014 delta calculated between polls. Formula: rate_bps = (current_bytes - previous_bytes) * 8 / poll_interval_sec. Polled every 30 seconds by fortigate_interface_collector.py. IMPORTANT: port16 negotiates at 100 Mbps. If aggregate WAN capacity (Fiber1 + Fiber2 + Starlink) exceeds 100 Mbps, this link is the bottleneck. Threshold lines at 80 Mbps (yellow) and 95 Mbps (red) indicate congestion risk.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 46,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80000000
+              },
+              {
+                "color": "red",
+                "value": 95000000
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_interface_tx_rate_bps{interface=\"x3\",site=\"norrsken-kigali\"}",
+          "legendFormat": "TX (upload to Peplink)",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_interface_rx_rate_bps{interface=\"x3\",site=\"norrsken-kigali\"}",
+          "legendFormat": "RX (download from Peplink)",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "port16 Link Status",
+      "description": "Current link state per active FortiGate interface. SOURCE: VictoriaMetrics metric 'fortigate_interface_link', all interfaces, site=norrsken-kigali. Derived from FortiGate REST API endpoint: GET https://192.168.1.1/api/v2/monitor/system/interface Field: 'link' (boolean) \u2192 converted to 1 (UP) or 0 (DOWN). Polled every 30 seconds by fortigate_interface_collector.py. Only UP interfaces are reported \u2014 DOWN interfaces with no traffic are excluded to reduce noise. System interfaces (mgmt, ha, ssl.root) are always excluded. Green = UP, Red = DOWN. Any red panel indicates a physical link failure.",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 54,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_interface_link{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{interface}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "x3 Negotiated Speed",
+      "description": "Negotiated link speed on x3 in Mbps. SOURCE: VictoriaMetrics metric 'fortigate_interface_speed_mbps', label interface=port16, site=norrsken-kigali. Derived from FortiGate REST API endpoint: GET https://192.168.1.1/api/v2/monitor/system/interface Field: 'speed' (float, Mbps as reported by the interface). Polled every 30 seconds by fortigate_interface_collector.py. Currently shows 100 Mbps \u2014 the negotiated speed between FortiGate port16 and the Peplink Balance 1350 LAN port. If this changes (e.g. drops to 10 Mbps), it indicates a physical layer negotiation problem between the two devices.",
+      "type": "stat",
+      "gridPos": {
+        "x": 6,
+        "y": 54,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "suffix": " Mbps",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_interface_speed_mbps{interface=\"x3\",site=\"norrsken-kigali\"}",
+          "legendFormat": "x3 speed",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38
+}

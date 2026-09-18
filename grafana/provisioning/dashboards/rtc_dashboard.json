@@ -1,0 +1,594 @@
+{
+  "title": "RTC Media Quality \u2014 Norrsken Kigali",
+  "uid": "norrsken-rtc-001",
+  "tags": [
+    "norrsken",
+    "rtc",
+    "voice",
+    "video",
+    "sla"
+  ],
+  "timezone": "Africa/Kigali",
+  "refresh": "120s",
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "About This Dashboard",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Tracks FortiGate SD-WAN kernel SLA metrics (latency, jitter, packet loss) for appids explicitly classified by FortiGuard as **RTC-VOICE / RTC-VIDEO** \u2014 real-time media traffic only, excluding signaling, chat, and file-transfer traffic from the same platforms.\n\n**IMPORTANT \u2014 confirmed data availability per platform (checked 2026-08-26):**\n\n| Platform | SD-WAN kernel data available? |\n|---|---|\n| Google Meet (48983) | YES |\n| Zoom Meeting (47385) | YES |\n| Signal (43847) | YES |\n| Webex (16350) | YES |\n| FaceTime (24426) | YES (very sparse) |\n| Microsoft Teams Audio (54418) | **NO** |\n| Microsoft Teams Video (54419) | **NO** |\n| WhatsApp VoIP (40698) | **NO** |\n\nTeams and WhatsApp calls generate substantial real traffic but FortiGate's SD-WAN kernel engine never produces a performance measurement for them on this configuration \u2014 likely because this traffic isn't currently matched by a firewall/SD-WAN rule that triggers kernel health-check evaluation. This is a FortiGate configuration limitation, not a gap in this dashboard's queries. Panels for Teams/WhatsApp will show 'No data' \u2014 this reflects reality, not a broken query.\n\n**Data source:** `rtc_media_bridge.py` \u2014 polls Elasticsearch every 120s, aggregates the last 120s of SD-WAN SLA log entries per app+interface using real `stats` aggregations (avg/max) for latency and jitter (confirmed numeric fields). Packet loss, reply jitter, origin jitter, and server response time are keyword-mapped in this ES index and use latest-value only, not a true window average."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Active RTC Sessions Right Now",
+      "description": "Shows sample_count per app for the current window \u2014 a nonzero value means FortiGate logged at least one real-time media SLA measurement for that app recently, i.e. a call is likely in progress. SOURCE: fortigate_rtc_sla_sample_count, label app. Zero or missing = no active call detected for that platform.",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "NO CALL",
+                  "color": "gray"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "orientation": "horizontal",
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_sample_count{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "RTC Latency \u2014 Average & Peak",
+      "description": "Per-app latency for real-time media traffic only (RTC-VOICE/RTC-VIDEO appids). SOURCE: fortigate_rtc_sla_latency (avg) and fortigate_rtc_sla_latency_max (peak within each 120s aggregation window), label app. Derived from Elasticsearch field fortinet.firewall.latency (confirmed float type) via a real stats aggregation across every SD-WAN SLA log entry in the window, not just the latest single reading. Thresholds: Green <80ms, Yellow 80-150ms, Red >150ms.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 150
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_latency{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}} \u2014 avg",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_latency_max{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}} \u2014 max",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "RTC Jitter \u2014 Average & Peak",
+      "description": "Per-app jitter for real-time media traffic only. SOURCE: fortigate_rtc_sla_jitter (avg) and fortigate_rtc_sla_jitter_max (peak within each 120s window), label app. Derived from fortinet.firewall.jitter (confirmed float type) via stats aggregation. This is the primary indicator of call quality problems \u2014 high jitter causes choppy audio and freezing video even when latency is acceptable. Thresholds: Green <30ms, Yellow 30-100ms, Red >100ms.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_jitter{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}} \u2014 avg",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_jitter_max{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}} \u2014 max",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "RTC Packet Loss (Latest Reading)",
+      "description": "Per-app packet loss for real-time media traffic. SOURCE: fortigate_rtc_sla_packetloss, label app. IMPORTANT: fortinet.firewall.packetloss is mapped as a keyword (string) field in this Elasticsearch index, not numeric \u2014 confirmed via _mapping/field lookup on 2026-08-25. Elasticsearch stats aggregations are not supported on keyword fields, so unlike latency/jitter above, this value is the single LATEST reading in each 30s poll window, not a true window average. Thresholds: Green <1%, Yellow 1-5%, Red >5%.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 27,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_packetloss{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Voice vs Video \u2014 Latency Comparison",
+      "description": "Compares latency between voice-only RTC traffic (Microsoft Teams Audio) and video RTC traffic (Teams Video, Zoom, Meet, WhatsApp Video, FaceTime, Signal, Webex), using the media_type label assigned directly from the FortiGuard signature reference table (not inferred from bandwidth). SOURCE: fortigate_rtc_sla_latency grouped by media_type label.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 35,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "voice"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "video"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_rtc_sla_latency{site=\"norrsken-kigali\",media_type=\"voice\"})",
+          "legendFormat": "voice",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_rtc_sla_latency{site=\"norrsken-kigali\",media_type=\"video\"})",
+          "legendFormat": "video",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Voice vs Video \u2014 Jitter Comparison",
+      "description": "Same comparison as the latency panel, for jitter. SOURCE: fortigate_rtc_sla_jitter grouped by media_type label.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 35,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "voice"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "video"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_rtc_sla_jitter{site=\"norrsken-kigali\",media_type=\"voice\"})",
+          "legendFormat": "voice",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_rtc_sla_jitter{site=\"norrsken-kigali\",media_type=\"video\"})",
+          "legendFormat": "video",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "RTC Summary Table",
+      "description": "Current snapshot of all tracked RTC apps \u2014 mean/max/last for latency and jitter over the selected time range. SOURCE: fortigate_rtc_sla_latency and fortigate_rtc_sla_jitter, reduced per app.",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 43,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 150
+              }
+            ]
+          },
+          "custom": {
+            "displayMode": "color-background"
+          }
+        }
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Last",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "mean",
+              "median",
+              "max",
+              "last"
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_latency{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}} \u2014 latency",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_rtc_sla_jitter{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{app}} \u2014 jitter",
+          "refId": "B"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38
+}

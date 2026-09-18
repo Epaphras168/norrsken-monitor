@@ -1,0 +1,543 @@
+{
+  "title": "Traffic Lanes \u2014 Norrsken Kigali",
+  "uid": "norrsken-lanes-001",
+  "tags": [
+    "norrsken",
+    "lanes",
+    "shaping",
+    "qos"
+  ],
+  "timezone": "Africa/Kigali",
+  "refresh": "2m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Lane Definitions Reference",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 5
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Lane 1 \u2014 Real-Time-L1**: Zoom, Teams, Meet, WhatsApp calls, STUN, DTLS (explicit appid match)\n\n**Lane 2 \u2014 Hand-on-Control-L2**: SSH, GitHub, GitLab + Remote.Access category (explicit appid + category 7)\n\n**Lane 3 \u2014 Everyday-Response-L3**: Collaboration (Slack, Docs, SharePoint) + GenAI (Claude, ChatGPT) + Email (categories 28, 36, 21)\n\n**Lane 4 \u2014 Background-Bulk-L4**: Cloud.IT (AWS, Azure) + Storage.Backup (Drive, OneDrive) + Social Media + Games (categories 32, 22, 23, 8)\n\n**Note**: Zoom/Teams/WhatsApp also appear under Collaboration category but match Lane 1 first (policy order 1-4, first match wins). GitHub also appears under Storage.Backup but matches Lane 2 first."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Sessions per Lane (Quantity)",
+      "description": "SOURCE: VictoriaMetrics metric fortigate_lane_traffic_session_count, label lane. Derived from Elasticsearch field fortinet.firewall.shapingpolicyname on FortiGate traffic logs (logid 0000000013). Aggregated every 2 minutes by lane_quality_bridge.py. This is ground-truth data directly from FortiGate's shaping policy assignment \u2014 not inferred.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E02F44",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_lane_traffic_session_count{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{lane}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Bandwidth per Lane (Quantity)",
+      "description": "SOURCE: VictoriaMetrics metric fortigate_lane_traffic_total_bytes, label lane. Derived from Elasticsearch field network.bytes summed per fortinet.firewall.shapingpolicyname. Ground-truth data directly from FortiGate's shaping policy assignment.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E02F44",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "L4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_lane_traffic_total_bytes{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{lane}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Current Lane Share (Quantity)",
+      "description": "Pie chart showing proportion of sessions per lane over the selected time range. SOURCE: fortigate_lane_traffic_session_count summed per lane.",
+      "type": "piechart",
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ]
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_lane_traffic_session_count{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{lane}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Lane Traffic Summary Table",
+      "description": "Mean and total sessions/bytes per lane. SOURCE: fortigate_lane_traffic_session_count and fortigate_lane_traffic_total_bytes.",
+      "type": "table",
+      "gridPos": {
+        "x": 8,
+        "y": 13,
+        "w": 16,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "displayMode": "color-background"
+          }
+        }
+      },
+      "options": {
+        "showHeader": true
+      },
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "mean",
+              "sum",
+              "last"
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_lane_traffic_session_count{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{lane}} sessions",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_lane_traffic_total_bytes{site=\"norrsken-kigali\"}",
+          "legendFormat": "{{lane}} bytes",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Lane 1 (Real-Time) \u2014 Quality: Jitter",
+      "description": "Quality measurement for apps assigned to Lane 1. SOURCE: fortigate_sdwan_sla_jitter filtered to app=~Zoom|Microsoft_Teams|Google_Meet. IMPORTANT: This is inferred by app-name mapping to Lane 1's known composition, not a direct field join \u2014 the SD-WAN kernel logs do not carry the shapingpolicyname field.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_jitter{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet\"}",
+          "legendFormat": "{{app}} jitter",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Lane 3 (Everyday) \u2014 Quality: Jitter",
+      "description": "Quality measurement for apps assigned to Lane 3 (Collaboration/Email/GenAI). SOURCE: fortigate_sdwan_sla_jitter filtered to app=~Slack|Gmail. IMPORTANT: Inferred mapping \u2014 not a direct field join.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 21,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_jitter{site=\"norrsken-kigali\",app=~\"Slack|Gmail\"}",
+          "legendFormat": "{{app}} jitter",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Lane Quality Comparison (Latency)",
+      "description": "Direct comparison of latency across lanes using representative apps per lane. Lane 1: Teams/Zoom/Meet. Lane 2: GitHub. Lane 3: Slack/Gmail. Lane 4: Google.Drive. This is the key panel proving whether real-time traffic (Lane 1) gets better treatment than bulk (Lane 4) after the routing change.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Zoom|Microsoft_Teams|Google_Meet\"})",
+          "legendFormat": "Lane 1 (Real-Time) avg latency",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Github\"})",
+          "legendFormat": "Lane 2 (Hand-on-Control) avg latency",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Slack|Gmail\"})",
+          "legendFormat": "Lane 3 (Everyday) avg latency",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "avg(fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=~\"Google_Drive\"})",
+          "legendFormat": "Lane 4 (Bulk) avg latency",
+          "refId": "D"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38
+}

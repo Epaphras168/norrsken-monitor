@@ -1,0 +1,345 @@
+{
+  "period_start": "2026-08-24T08:00:00Z",
+  "period_end": "2026-08-30T08:00:00Z",
+  "report_date": "30 August 2026",
+  "app_latency_jitter": [
+    {
+      "app": "Unknown",
+      "appid": 0,
+      "avg_latency": 274.6,
+      "max_latency": 4998.1,
+      "avg_jitter": 2860.6,
+      "max_jitter": 22268.0,
+      "count": 5315
+    },
+    {
+      "app": "SSL_TLSv1.2",
+      "appid": 41540,
+      "avg_latency": 222.5,
+      "max_latency": 768.8,
+      "avg_jitter": 446.6,
+      "max_jitter": 8236.0,
+      "count": 4952
+    },
+    {
+      "app": "SSL",
+      "appid": 15895,
+      "avg_latency": 128.9,
+      "max_latency": 3257.9,
+      "avg_jitter": 427.1,
+      "max_jitter": 32076.0,
+      "count": 5210
+    },
+    {
+      "app": "Microsoft.Portal",
+      "appid": 41469,
+      "avg_latency": 218.0,
+      "max_latency": 1417.1,
+      "avg_jitter": 392.5,
+      "max_jitter": 9580.0,
+      "count": 5319
+    },
+    {
+      "app": "SSL_TLSv1.3",
+      "appid": 47013,
+      "avg_latency": 145.7,
+      "max_latency": 1360.9,
+      "avg_jitter": 385.0,
+      "max_jitter": 22276.0,
+      "count": 5289
+    },
+    {
+      "app": "HTTPS_Browser",
+      "appid": 15893,
+      "avg_latency": 132.2,
+      "max_latency": 900.4,
+      "avg_jitter": 375.7,
+      "max_jitter": 21540.0,
+      "count": 5017
+    },
+    {
+      "app": "SSL_TLSv1.3_PQC",
+      "appid": 56688,
+      "avg_latency": 140.4,
+      "max_latency": 1469.3,
+      "avg_jitter": 362.7,
+      "max_jitter": 8484.0,
+      "count": 4937
+    },
+    {
+      "app": "Google.Services",
+      "appid": 42533,
+      "avg_latency": 79.1,
+      "max_latency": 1396.8,
+      "avg_jitter": 335.3,
+      "max_jitter": 14516.0,
+      "count": 5266
+    },
+    {
+      "app": "Microsoft.Teams",
+      "appid": 43541,
+      "avg_latency": 88.7,
+      "max_latency": 1902.9,
+      "avg_jitter": 326.4,
+      "max_jitter": 9368.0,
+      "count": 5259
+    },
+    {
+      "app": "Unknown_50535",
+      "appid": 50535,
+      "avg_latency": 53.1,
+      "max_latency": 807.3,
+      "avg_jitter": 260.3,
+      "max_jitter": 8212.0,
+      "count": 5466
+    },
+    {
+      "app": "WhatsApp_Web",
+      "appid": 39999,
+      "avg_latency": 69.5,
+      "max_latency": 982.1,
+      "avg_jitter": 231.1,
+      "max_jitter": 14064.0,
+      "count": 5074
+    },
+    {
+      "app": "app_107347980",
+      "appid": 107347980,
+      "avg_latency": 229.8,
+      "max_latency": 1106.1,
+      "avg_jitter": 220.6,
+      "max_jitter": 19080.0,
+      "count": 5352
+    },
+    {
+      "app": "Gmail",
+      "appid": 15817,
+      "avg_latency": 90.7,
+      "max_latency": 1199.3,
+      "avg_jitter": 209.5,
+      "max_jitter": 18808.0,
+      "count": 5051
+    },
+    {
+      "app": "Slack",
+      "appid": 43345,
+      "avg_latency": 111.5,
+      "max_latency": 3246.0,
+      "avg_jitter": 203.4,
+      "max_jitter": 17624.0,
+      "count": 5085
+    },
+    {
+      "app": "GitHub",
+      "appid": 35766,
+      "avg_latency": 110.1,
+      "max_latency": 790.1,
+      "avg_jitter": 194.0,
+      "max_jitter": 11032.0,
+      "count": 4956
+    },
+    {
+      "app": "Google.Accounts",
+      "appid": 38131,
+      "avg_latency": 143.4,
+      "max_latency": 1244.5,
+      "avg_jitter": 188.4,
+      "max_jitter": 14912.0,
+      "count": 5204
+    },
+    {
+      "app": "Microsoft.Azure",
+      "appid": 38924,
+      "avg_latency": 200.5,
+      "max_latency": 363.3,
+      "avg_jitter": 142.7,
+      "max_jitter": 4184.0,
+      "count": 5331
+    },
+    {
+      "app": "HTTPS/DNS",
+      "appid": 16195,
+      "avg_latency": 82.0,
+      "max_latency": 2998.1,
+      "avg_jitter": 139.2,
+      "max_jitter": 9700.0,
+      "count": 5293
+    },
+    {
+      "app": "Google.Meet",
+      "appid": 48983,
+      "avg_latency": 76.5,
+      "max_latency": 711.6,
+      "avg_jitter": 130.3,
+      "max_jitter": 16600.0,
+      "count": 5149
+    },
+    {
+      "app": "Zoom",
+      "appid": 37065,
+      "avg_latency": 89.9,
+      "max_latency": 545.7,
+      "avg_jitter": 91.4,
+      "max_jitter": 2232.0,
+      "count": 4922
+    }
+  ],
+  "meet_kernel": {
+    "records": 286,
+    "avg_latency": 91.1,
+    "max_latency": 320.8,
+    "avg_jitter": 906.1,
+    "max_jitter": 7880.0
+  },
+  "service_availability": [
+    {
+      "instance": "https://github.com",
+      "pct": 36.75
+    },
+    {
+      "instance": "https://slack.com",
+      "pct": 99.21
+    },
+    {
+      "instance": "1.1.1.1",
+      "pct": 99.61
+    },
+    {
+      "instance": "208.67.222.222",
+      "pct": 99.63
+    },
+    {
+      "instance": "https://mail.google.com",
+      "pct": 99.68
+    },
+    {
+      "instance": "https://teams.microsoft.com",
+      "pct": 99.7
+    },
+    {
+      "instance": "8.8.8.8",
+      "pct": 99.77
+    },
+    {
+      "instance": "https://drive.google.com",
+      "pct": 99.77
+    },
+    {
+      "instance": "https://meet.google.com",
+      "pct": 99.77
+    },
+    {
+      "instance": "https://web.whatsapp.com",
+      "pct": 99.84
+    },
+    {
+      "instance": "https://www.google.com",
+      "pct": 99.88
+    },
+    {
+      "instance": "https://zoom.us",
+      "pct": 99.91
+    }
+  ],
+  "dns_latency": [
+    {
+      "instance": "1.1.1.1",
+      "ms": 96.8
+    },
+    {
+      "instance": "208.67.222.222",
+      "ms": 106.4
+    },
+    {
+      "instance": "8.8.8.8",
+      "ms": 37.1
+    }
+  ],
+  "interface": {
+    "rx_mean_mbps": 163.5,
+    "rx_median_mbps": 88.6,
+    "tx_mean_mbps": 47.1,
+    "tx_median_mbps": 30.3,
+    "rx_samples": 4321,
+    "tx_samples": 4321
+  },
+  "traffic_split": {
+    "rt_mb": 68.8,
+    "bk_mb": 962.1,
+    "rt_pct": 6.7,
+    "bk_pct": 93.3
+  },
+  "call_bitrate": {
+    "Google_Meet": {
+      "avg_mbps": 1.36,
+      "peak_mbps": 15.57,
+      "n": 2254
+    },
+    "Microsoft_Teams": {
+      "avg_mbps": 1.96,
+      "peak_mbps": 19.69,
+      "n": 31503
+    },
+    "WhatsApp_Voice": {
+      "avg_mbps": 1.4,
+      "peak_mbps": 13.73,
+      "n": 14670
+    },
+    "Zoom": {
+      "avg_mbps": 0.66,
+      "peak_mbps": 28.71,
+      "n": 8340
+    }
+  },
+  "lane_traffic": {
+    "L1": {
+      "avg_sessions_per_window": 140.7,
+      "avg_mb_per_window": 124.9
+    },
+    "L2": {
+      "avg_sessions_per_window": 190.1,
+      "avg_mb_per_window": 13.6
+    },
+    "L3": {
+      "avg_sessions_per_window": 1536.9,
+      "avg_mb_per_window": 219.7
+    },
+    "L4": {
+      "avg_sessions_per_window": 476.5,
+      "avg_mb_per_window": 112.9
+    }
+  },
+  "lane_quality": {
+    "L1_RealTime": {
+      "avg_latency_ms": 93.7,
+      "avg_jitter_ms": 202.2,
+      "representative_apps": [
+        "Zoom",
+        "Microsoft.Teams",
+        "Google.Meet"
+      ]
+    },
+    "L2_HandOnControl": {
+      "avg_latency_ms": 110.4,
+      "avg_jitter_ms": 190.0,
+      "representative_apps": [
+        "Github"
+      ]
+    },
+    "L3_Everyday": {
+      "avg_latency_ms": 106.3,
+      "avg_jitter_ms": 230.3,
+      "representative_apps": [
+        "Slack",
+        "Gmail"
+      ]
+    },
+    "L4_Background": {
+      "avg_latency_ms": 77.1,
+      "avg_jitter_ms": 125.5,
+      "representative_apps": [
+        "Google.Drive"
+      ]
+    }
+  }
+}

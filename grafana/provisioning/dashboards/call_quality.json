@@ -1,0 +1,1066 @@
+{
+  "title": "Real-Time Call Quality \u2014 Norrsken Kigali",
+  "uid": "norrsken-callquality-001",
+  "tags": [
+    "norrsken",
+    "calls",
+    "quality"
+  ],
+  "timezone": "Africa/Kigali",
+  "refresh": "2m",
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Active Calls Right Now",
+      "description": "Shows number of active media sessions per platform in the last 3 minutes. SOURCE: VictoriaMetrics metric 'real_time_media_quality_session_count', label 'platform'. Derived by stun_media_bridge.py querying Elasticsearch field 'network.application' (STUN + Google.Chat_Video.Call) with 'network.bytes' >= 500000. Session count = ES value_count aggregation on 'network.bytes' per platform per poll window.",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "NO CALL",
+                  "color": "gray"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "orientation": "horizontal",
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "text": {
+          "titleSize": 16,
+          "valueSize": 24
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum by (platform) (real_time_media_quality_session_count{site=\"norrsken-kigali\"})",
+          "legendFormat": "{{platform}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Microsoft Teams \u2014 Media Bitrate",
+      "description": "Instantaneous Teams media bitrate per 2-minute window. SOURCE: VictoriaMetrics metrics 'real_time_media_quality_instant_total_bps', 'instant_upload_bps', 'instant_download_bps', label platform=Microsoft_Teams. Derived from Elasticsearch fields: 'fortinet.firewall.sentdelta' (upload bytes in last 120s), 'fortinet.firewall.rcvddelta' (download bytes in last 120s). Platform identified by 'destination.as.number' = 8075 (Microsoft Corporation). App classification: 'network.application' = STUN. Relay location: 'destination.geo.city_name', 'destination.geo.country_name'. Formula: bitrate_bps = (sentdelta + rcvddelta) * 8 / 120.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 500000
+              },
+              {
+                "color": "green",
+                "value": 1500000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1F78C1",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Upload"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Download"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Microsoft_Teams\"})",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_upload_bps{site=\"norrsken-kigali\",platform=\"Microsoft_Teams\"})",
+          "legendFormat": "Upload",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_download_bps{site=\"norrsken-kigali\",platform=\"Microsoft_Teams\"})",
+          "legendFormat": "Download",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Google Meet \u2014 Media Bitrate",
+      "description": "Instantaneous Google Meet media bitrate per 2-minute window. SOURCE: VictoriaMetrics metrics 'real_time_media_quality_instant_total_bps', 'instant_upload_bps', 'instant_download_bps', label platform=Google_Meet_Video. Derived from Elasticsearch fields: 'fortinet.firewall.sentdelta' (upload bytes in last 120s), 'fortinet.firewall.rcvddelta' (download bytes in last 120s). Platform identified by 'network.application' = Google.Chat_Video.Call (appid 37402, FortiGate DPI classification). Destination: 'destination.as.number' = 15169 (Google LLC), port 3478. Relay: 'destination.geo.city_name' / 'destination.geo.country_name'. Formula: bitrate_bps = (sentdelta + rcvddelta) * 8 / 120.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 500000
+              },
+              {
+                "color": "green",
+                "value": 1500000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Upload"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Download"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Google_Meet_Video\"})",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_upload_bps{site=\"norrsken-kigali\",platform=\"Google_Meet_Video\"})",
+          "legendFormat": "Upload",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_download_bps{site=\"norrsken-kigali\",platform=\"Google_Meet_Video\"})",
+          "legendFormat": "Download",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Zoom \u2014 Media Bitrate",
+      "description": "Instantaneous Zoom media bitrate per 2-minute window. SOURCE: VictoriaMetrics metrics 'real_time_media_quality_instant_total_bps', 'instant_upload_bps', 'instant_download_bps', label platform=Zoom. Derived from Elasticsearch fields: 'fortinet.firewall.sentdelta', 'fortinet.firewall.rcvddelta'. Platform identified by 'destination.as.number' = 8100 (Zoom Video Communications). App classification: 'network.application' = STUN. Shows No data when no Zoom calls are active. Formula: bitrate_bps = (sentdelta + rcvddelta) * 8 / 120.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 500000
+              },
+              {
+                "color": "green",
+                "value": 1500000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Upload"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Download"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Zoom\"})",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_upload_bps{site=\"norrsken-kigali\",platform=\"Zoom\"})",
+          "legendFormat": "Upload",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_download_bps{site=\"norrsken-kigali\",platform=\"Zoom\"})",
+          "legendFormat": "Download",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "WhatsApp \u2014 Media Bitrate",
+      "description": "Instantaneous WhatsApp voice/video media bitrate per 2-minute window. SOURCE: VictoriaMetrics metrics 'real_time_media_quality_instant_total_bps', 'instant_upload_bps', 'instant_download_bps', label platform=~WhatsApp.*. Derived from Elasticsearch fields: 'fortinet.firewall.sentdelta', 'fortinet.firewall.rcvddelta'. Platform identified by 'destination.as.number' = 32934 (Meta/Facebook) for voice, and 'network.application' = WhatsApp.Video.Call or WhatsApp.Voice.Call for directly classified flows. Thresholds lower than video platforms: voice targets 50-100 Kbps, video 300-800 Kbps. Formula: bitrate_bps = (sentdelta + rcvddelta) * 8 / 120.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 13,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50000
+              },
+              {
+                "color": "green",
+                "value": 300000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#56A64B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Upload"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FF780A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Download"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=~\"WhatsApp.*\"})",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_upload_bps{site=\"norrsken-kigali\",platform=~\"WhatsApp.*\"})",
+          "legendFormat": "Upload",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_download_bps{site=\"norrsken-kigali\",platform=~\"WhatsApp.*\"})",
+          "legendFormat": "Download",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Google Meet \u2014 SD-WAN Kernel Quality (UDP Media Stream)",
+      "description": "FortiGate SD-WAN kernel latency, jitter, and packet loss for Google Meet UDP media stream (appid 37402). SOURCE: VictoriaMetrics metrics 'fortigate_sdwan_sla_latency', 'fortigate_sdwan_sla_jitter', 'fortigate_sdwan_sla_packetloss', label app=Google_Chat_Video_Call. Derived from Elasticsearch index 'logs-fortinet_fortigate.log-*', fields: 'fortinet.firewall.latency', 'fortinet.firewall.jitter', 'fortinet.firewall.packetloss'. Original FortiGate log: logid=0113022941, type=event, subtype=sdwan, appid=37402. Ingested by Elastic Agent Fortinet integration v1.36.8. IMPORTANT: This metric appears intermittently. FortiGate only generates kernel SLA metrics for UDP flows when it has sufficient packet samples for RTT estimation. Panel will show No data between active calls. When present, this is the most direct transport-layer measurement of the actual media stream available from this hardware without endpoint agents.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Latency (ms)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Jitter (ms)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Packet Loss (%)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E02F44",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_latency{site=\"norrsken-kigali\",app=\"Google_Chat_Video_Call\"}",
+          "legendFormat": "Latency (ms)",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_jitter{site=\"norrsken-kigali\",app=\"Google_Chat_Video_Call\"}",
+          "legendFormat": "Jitter (ms)",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "fortigate_sdwan_sla_packetloss{site=\"norrsken-kigali\",app=\"Google_Chat_Video_Call\"}",
+          "legendFormat": "Packet Loss (%)",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "All Platforms \u2014 Bitrate Comparison",
+      "description": "All platforms combined on one panel for direct before/after comparison. SOURCE: VictoriaMetrics metric 'real_time_media_quality_instant_total_bps' summed per platform label. Teams: sum of STUN flows to ASN 8075 (Microsoft). Meet: sum of Google.Chat_Video.Call flows (appid 37402) to ASN 15169 (Google). Zoom: sum of STUN flows to ASN 8100 (Zoom). WhatsApp: sum of STUN flows to ASN 32934 (Meta) + direct WhatsApp flows. After SpeedFusion bonding is applied, all active lines should shift upward if the UDP media path through the bond improves. Platforms not in a call will show 0 or No data \u2014 this is expected.",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Microsoft Teams"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1F78C1",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Google Meet"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Zoom"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WhatsApp"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#56A64B",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "min",
+            "max",
+            "last"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Microsoft_Teams\"})",
+          "legendFormat": "Microsoft Teams",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Google_Meet_Video\"})",
+          "legendFormat": "Google Meet",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Zoom\"})",
+          "legendFormat": "Zoom",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=~\"WhatsApp.*\"})",
+          "legendFormat": "WhatsApp",
+          "refId": "D"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Call Quality Summary",
+      "description": "Summary table of call quality per platform over the selected time range. SOURCE: VictoriaMetrics metric 'real_time_media_quality_instant_total_bps' summed per platform. Values are in bps. Mean = average bitrate across all samples in the time range (includes zero values when no call was active \u2014 will pull mean down). Max = peak bitrate observed. Last = most recent 2-minute window. Color coding: Green > 1.5 Mbps (HD quality), Yellow 500 Kbps-1.5 Mbps (degraded), Red < 500 Kbps (poor or no call). Note: Mean will appear low if the time range includes periods with no active calls. Use Last for current call quality.",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 40,
+        "w": 24,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 500000
+              },
+              {
+                "color": "green",
+                "value": 1500000
+              }
+            ]
+          },
+          "custom": {
+            "displayMode": "color-background",
+            "align": "left"
+          }
+        }
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Last",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "mean",
+              "min",
+              "max",
+              "last"
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Microsoft_Teams\"})",
+          "legendFormat": "Microsoft Teams",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Google_Meet_Video\"})",
+          "legendFormat": "Google Meet",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=\"Zoom\"})",
+          "legendFormat": "Zoom",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum(real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\",platform=~\"WhatsApp.*\"})",
+          "legendFormat": "WhatsApp",
+          "refId": "D"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Relay Server Locations",
+      "description": "Where each platform routes call media from Kigali. SOURCE: VictoriaMetrics label 'relay_city' and 'relay_country' on 'real_time_media_quality_instant_total_bps'. Relay location derived from Elasticsearch fields: 'destination.geo.city_name', 'destination.geo.country_name' \u2014 populated by Elasticsearch GeoIP enrichment on 'destination.ip'. Confirms the middle-mile path that is outside Zuba Broadband control. Teams confirmed: Johannesburg, South Africa (Microsoft Azure). Meet confirmed: Johannesburg, South Africa (Google LLC). This table updates only when calls are active.",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 47,
+        "w": 24,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "custom": {
+            "displayMode": "auto",
+            "align": "left"
+          }
+        }
+      },
+      "options": {
+        "showHeader": true
+      },
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "last"
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "expr": "sum by (platform, relay_city, relay_country) (real_time_media_quality_instant_total_bps{site=\"norrsken-kigali\"})",
+          "legendFormat": "{{platform}} \u2192 {{relay_city}}, {{relay_country}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38
+}

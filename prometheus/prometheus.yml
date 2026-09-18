@@ -1,0 +1,62 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+remote_write:
+  - url: http://victoriametrics:8428/api/v1/write
+    queue_config:
+      max_samples_per_send: 10000
+
+scrape_configs:
+  - job_name: 'node'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          site: 'norrsken-kigali'
+
+  - job_name: 'blackbox_http'
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://zoom.us
+          - https://teams.microsoft.com
+          - https://meet.google.com
+          - https://web.whatsapp.com
+          - https://slack.com
+          - https://drive.google.com
+          - https://mail.google.com
+          - https://github.com
+          - https://www.google.com
+        labels:
+          site: 'norrsken-kigali'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox_icmp'
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+      - targets:
+          - 8.8.8.8
+          - 1.1.1.1
+          - 208.67.222.222
+        labels:
+          site: 'norrsken-kigali'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115

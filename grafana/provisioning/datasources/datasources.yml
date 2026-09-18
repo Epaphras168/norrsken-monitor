@@ -1,0 +1,27 @@
+apiVersion: 1
+
+datasources:
+  - name: VictoriaMetrics
+    type: prometheus
+    access: proxy
+    url: http://victoriametrics:8428
+    isDefault: true
+    jsonData:
+      timeInterval: "30s"
+
+  - name: Elasticsearch
+    type: elasticsearch
+    access: proxy
+    url: https://host.docker.internal:9200
+    database: "logs-fortinet_fortigate.log-*"
+    basicAuth: true
+    basicAuthUser: elastic
+    jsonData:
+      esVersion: "9.0.0"
+      timeField: "@timestamp"
+      interval: No pattern
+      logMessageField: message
+      logLevelField: log.level
+      tlsSkipVerify: true
+    secureJsonData:
+      basicAuthPassword: "$ES_PASSWORD"
